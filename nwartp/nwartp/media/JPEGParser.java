@@ -19,21 +19,22 @@ import java.io.IOException;
 //FIXME there may be more than one 0xff between segments
 class JPEGParser
 {
-  private final static Logger logger_ = new Logger("JPEGParser", null);
+  private final static Logger logger_ = new Logger("JPEGParser", null, Logger.LEVEL_DEBUG);
 
-  private final static int MARKER_SEPERATOR = 0xff;
-  private final static int MARKER_SOI = 0xd8;
-  private final static int MARKER_APP0 = 0xe0;
-  private final static int MARKER_SOF0 = 0xc0;
-  private final static int MARKER_SOS = 0xda;
-  private final static int MARKER_LSE = 0xf2;
-  private final static int MARKER_DQT = 0xdb;
-  private final static int MARKER_DRI = 0xdd;
-  private final static int MARKER_DHT = 0xc4;
+  final static int MARKER_SEPERATOR = 0xff;
+  final static int MARKER_SOI = 0xd8;
+  final static int MARKER_APP0 = 0xe0;
+  final static int MARKER_SOF0 = 0xc0;
+  final static int MARKER_SOS = 0xda;
+  final static int MARKER_LSE = 0xf2;
+  final static int MARKER_DQT = 0xdb;
+  final static int MARKER_DRI = 0xdd;
+  final static int MARKER_DHT = 0xc4;
+  final static int MARKER_EOI = 0xd9;
 
-  private final static int MARKER_THUMBNAIL = 0x10;
-  private final static int MARKER_THUMBNAIL_1Byte = 0x11;
-  private final static int MARKER_THUMBNAIL_3Byte = 0x13;
+  final static int MARKER_THUMBNAIL = 0x10;
+  final static int MARKER_THUMBNAIL_1Byte = 0x11;
+  final static int MARKER_THUMBNAIL_3Byte = 0x13;
 
   private final int[] STRING_JFIF = {0x4a, 0x46, 0x49, 0x46, 0x00};
   private final int[] STRING_JFXX = {0x4a, 0x46, 0x58, 0x58, 0x00};
@@ -399,12 +400,9 @@ class JPEGParser
 
       //now are length symbol bytes in the stream
       //generate event before possible recursion
-      //observer_.handleDQT(inputStream_, qtInfo, length);
-      for (int i = 0; i < length; i++)
-      {
-        read();
-      }
       
+      observer_.handleDHT(inputStream_, length);
+    
 
       //a single DHT segment may contain more HTs...
       currentLength += length + 17;
@@ -459,7 +457,6 @@ class JPEGParser
         read();
       }
 
-      //FIXME
       read(); //near
       read(); //interleave
       read(); //point transform
@@ -470,7 +467,8 @@ class JPEGParser
     void setNextState() throws IOException, EndOfStreamException, JPEGStreamException
     {
       logger_.log("find next state");
-      int[] lookahead = new int[0];
+
+      /*      int[] lookahead = new int[0];
 
       int b1 = read();
       if (b1 == MARKER_SEPERATOR)
@@ -489,7 +487,7 @@ class JPEGParser
         lookahead[0] = b1;
         lookahead[1] = b2;
       }
-      imageDataState_.setLookahead(lookahead);
+      imageDataState_.setLookahead(lookahead);*/
       state_ = imageDataState_;
       logger_.log("begin image data");
     }
@@ -498,16 +496,16 @@ class JPEGParser
   class ImageDataState extends StreamState
   {
     private final Logger logger_ = new Logger("ImageDataState", JPEGParser.logger_);
-    private int[] lookahead_ = new int[0];
+    //private int[] lookahead_ = new int[0];
 
-    void setLookahead(int[] lookahead)
+    /*void setLookahead(int[] lookahead)
     {
       lookahead_ = lookahead;
-    }
+      }*/
 
     void nextEvent() throws IOException, EndOfStreamException, JPEGStreamException
     {
-      observer_.handleImageData(inputStream_, lookahead_);
+      observer_.handleImageData(inputStream_);
       setNextState();
     }
 

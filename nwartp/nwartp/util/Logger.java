@@ -5,9 +5,9 @@ import java.io.IOException;
 
 //this is a primitive logger
 
-//to reduce amount of typing each Logger object holds a prefix String, 
-//the downside of this is, the log() method is not static, so you
-//have to create instances of Logger...
+//to reduce amount of typing each Logger object holds a prefix String,
+//the downside of this is, the log() method is not static, so you have
+//to create instances of Logger...
 
 public class Logger
 {
@@ -17,15 +17,21 @@ public class Logger
                                           //be performance critical
   public static final int LEVEL_ERROR = 2;//things that should not be...
 
-  private final static int MIN_LOGGING_PRIORITY = LEVEL_LOOP;
   private final static int LEVEL_DEFAULT = LEVEL_LOOP;
 
+  private int minLoggingPriority_ = LEVEL_LOOP;
   private Logger logger_;
   private String prefix_;
 
 
   public Logger(String prefix)
   {
+    init(prefix, null);
+  }
+
+  public Logger(String prefix, int minPriority)
+  {
+    minLoggingPriority_ = minPriority;
     init(prefix, null);
   }
 
@@ -38,6 +44,12 @@ public class Logger
     init(prefix, logger);
   }
 
+  public Logger(String prefix, Logger logger, int minPriority)
+  {
+    minLoggingPriority_ = minPriority;
+    init(prefix, logger);
+  }
+
   public void log(String s)
   {
     log(s, LEVEL_DEFAULT);
@@ -45,23 +57,24 @@ public class Logger
 
   public void log(String s, int priority)
   {
-    if (priority >= MIN_LOGGING_PRIORITY)
+    if (priority >= minLoggingPriority_)
     {
-
-      System.out.println(getPrefix() + ":" + s + " " + getLevelString(priority));
+      if (priority >= getLoggingPriority())
+      {      
+        System.out.println(getPrefix() + ":" + s + " " + getLevelString(priority));
+      }
     }
-    
   }
 
   private String getLevelString(int priority)
   {
     switch (priority)
     {
-      case  LEVEL_LOOP:
-        return "[LOOP]";
+    case  LEVEL_LOOP:
+      return "[LOOP]";
 
-      case  LEVEL_DEBUG:
-        return "[DEBUG]";
+    case  LEVEL_DEBUG:
+      return "[DEBUG]";
     }
     return "[*** ERROR ***]";
   }
@@ -79,5 +92,16 @@ public class Logger
       return prefix_;
     }
     return logger_.getPrefix() + ":" + prefix_;
+  }
+
+  //returns max minLogLevel from list if Loggers
+  //useful? for setting output level in parent.
+  private int getLoggingPriority()
+  {
+    if (logger_ == null)
+    {
+      return minLoggingPriority_;
+    }
+    return Math.max(logger_.getLoggingPriority(), minLoggingPriority_);
   }
 }

@@ -1,0 +1,3 @@
+Generating jpegs that work with cutter:
+
+mplayer -vo jpeg ...

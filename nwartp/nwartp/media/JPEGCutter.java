@@ -188,13 +188,42 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
     qTableData_.add(data);
   }
 
-  public void handleImageData(InputStream stream, int[] lookahead) throws IOException
+  public void handleImageData(InputStream stream) throws IOException
   {
     logger_.log("handleImageData()");
     
     //QT has to be ready here...
     writeQT();
 
+    //ugly reading bytes until end of image...
+    int b1 = stream.read();
+    while (true)
+    {
+      if (b1 == JPEGParser.MARKER_SEPERATOR)
+      {
+        int b2 = stream.read();
+        switch (b2)
+        {
+        case JPEGParser.MARKER_EOI:
+          ready_ = true;
+          return;
+
+        case JPEGParser.MARKER_SOS:
+          logger_.log("second SOS marker found -> JPEG not supported by RTP", 
+                      Logger.LEVEL_ERROR);
+          throw new IOException();          
+
+        default:
+          writeByte(b1);
+          b1 = b2;
+        }
+      }
+      else
+      {
+        writeByte(b1);
+        b1 = stream.read();
+      }
+    }
   }
 
 
@@ -207,13 +236,13 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
 
   private void hardcodeHeaders()
   {
-    mainJPEGHeader_.setTypeSpecific(0);
+    mainJPEGHeader_.setTypeSpecific(0);//progressively scanned
     mainJPEGHeader_.setFragmentOffset(0);
-    mainJPEGHeader_.setType(0);
-    mainJPEGHeader_.setQ(0);
+    mainJPEGHeader_.setType(0);//0 or 1:no restart markers
+    mainJPEGHeader_.setQ(128);//dynamic QTables
 
-    quantizationTableHeader_.setMBZ(0);
-    quantizationTableHeader_.setPresition(0);
+    quantizationTableHeader_.setMBZ(0);//meaning of this one is not documented...
+    quantizationTableHeader_.setPresition(0);//8 bit tables only
   }
 
   private void initGetNextPayload()
@@ -239,6 +268,7 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
       byte[] data = (byte[])tables.next();
       length += data.length;
     }
+    logger_.log("QTableDataLength: " + length);
     quantizationTableHeader_.setLength(length);
 
     writeArray(quantizationTableHeader_.getByteArray());
@@ -259,6 +289,9 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
     writeArray(mainJPEGHeader_.getByteArray());
   }
 
+
+  //this 2 functions handle writing to buffer, buffer implemenation may be
+  //changed...
   private void writeArray(byte[] a)
   {
     for (int i = 0; i < a.length; i++)
@@ -267,10 +300,23 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
     }
   }
 
-  public static void main(String[] args)
+  private void writeByte(int b)
+  {
+    payloadBuffer_.add(new Byte((byte)b));
+  }
+
+  public static void main(String[] args) throws Exception
   {
     //test java byte conversion
     int i = 254;
     System.out.println((byte)i);
+
+    InputStream is = new nwartp.media.MultipleFileInputStream
+      ("/home/manni/rep/nwartp/data/00000", 3, ".jpeg", 1);
+    JPEGCutter c = new JPEGCutter();
+    c.attachToStream(is);
+
+    c.getNextPayload();    
+
   }
 }
