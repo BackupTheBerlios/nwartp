@@ -1,0 +1,5 @@
+stream_source_name = ./data/00000
+stream_source_digits = 3
+stream_source_extension = .jpg
+stream_source_offset = 1
+stream_fps = 16

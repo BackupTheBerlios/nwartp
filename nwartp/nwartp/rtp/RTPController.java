@@ -1,6 +1,10 @@
 package nwartp.rtp;
 
+import java.util.Properties;
+import java.io.FileInputStream;
+
 import nwartp.util.Logger;
+
 
 public class RTPController implements Runnable
 {
@@ -61,14 +65,47 @@ public class RTPController implements Runnable
     stop_ = true;
   }
 
+
+  private static void printUsage()
+  {
+    System.out.println("USAGE: java nwartp.rtp.RTPController properties target_ip port");
+  }
+
   public static void main(String[] args) throws Exception
   {
+
+    if (args.length < 3)
+    {
+      printUsage();
+      return;
+    }
+
+    Properties props = new Properties();
+    
+    try
+    {
+      FileInputStream instream = new FileInputStream( args[0] );
+      props.load(instream);
+    }
+    catch( java.io.FileNotFoundException ex )
+    {
+      System.out.println(" Property file " + args[0] + " not found!");
+      printUsage();
+      return;
+    }
+    
     java.io.InputStream is = new nwartp.media.MultipleFileInputStream
-      ("/home/manni/rep/nwartp/data/00000", 3, ".jpg", 1);
-    nwartp.media.Cutter c = new nwartp.media.JPEGCutter(25);
+                             (
+                               props.getProperty("stream_source_name"), 
+                               Integer.parseInt(props.getProperty("stream_source_digits")), 
+                               props.getProperty("stream_source_extension"), 
+                               Integer.parseInt(props.getProperty("stream_source_offset"))
+                               );
+    
+    nwartp.media.Cutter c = new nwartp.media.JPEGCutter( Integer.parseInt(props.getProperty("stream_fps")) );
     c.attachToStream(is);
     RTPPacketGenerator g = new RTPPacketGenerator(c);
-    RTPController controller = new RTPController(g, new DummyRTPSender());
+    RTPController controller = new RTPController(g, new DummyRTPSender(args[1],Integer.parseInt(args[2])));
 
     controller.start();
     //Thread.currentThread().sleep(1000);

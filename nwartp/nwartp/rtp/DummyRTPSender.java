@@ -7,16 +7,20 @@ import java.net.InetAddress;
 public class DummyRTPSender implements RTPSender
 {
   private DatagramSocket dSock_;
+  private String hostname_ = "localhost";
+  private int port_ = 1234;
 
-  public DummyRTPSender()
+  public DummyRTPSender(String hostname, int port)
   {
+    hostname_ = hostname;
+    port_ = port;
     try 
     {
       dSock_ = new DatagramSocket();
     }
     catch (Exception e)
     {
-      
+      System.out.println(e);
     }
     
   }
@@ -26,7 +30,7 @@ public class DummyRTPSender implements RTPSender
     try 
     {
       DatagramPacket datagram = new DatagramPacket(packet, packet.length, 
-                                                   InetAddress.getByName("localhost"), 1234);
+                                                   InetAddress.getByName(hostname_), port_);
       dSock_.send(datagram); 
     }
     catch (Exception e)
