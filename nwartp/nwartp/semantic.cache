@@ -1,0 +1,14 @@
+;; Object semantic.cache
+;; SEMANTICDB Tags save file
+(semanticdb-project-database "semantic.cache"
+  :file "semantic.cache"
+  :tables (list 
+   (semanticdb-table "Lgger.java"
+    :file "Lgger.java"
+    :pointmax 1
+    :major-mode 'jde-mode
+    :tokens 'nil
+    :unmatched-syntax 'nil
+    )
+   )
+  )
