@@ -1,3 +1,4 @@
 Generating jpegs that work with cutter:
 
-mplayer -vo jpeg ...
+
+mplayer -vo jpeg -jpeg quality=50:smooth=0:baseline:noprogressive:optimize=0 filename

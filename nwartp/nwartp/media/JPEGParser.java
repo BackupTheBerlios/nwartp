@@ -339,9 +339,12 @@ class JPEGParser
 
       for (int i = 0; i < components; i++)
       {
-        read();
-        read();
-        read();
+        read();   //component id
+
+        //callback would be necessary for non-hardcoded type numbers
+        read();   //sub-sampling
+
+        read();   //always zero...
       }
       setNextState();
     }
@@ -449,7 +452,7 @@ class JPEGParser
       int length =  read2ByteInt();
       logger_.log("block length: " + length);
 
-      int numberOfComponents = read();
+      /*int numberOfComponents = read();
       for ( int i = 0; i < numberOfComponents; i++)
       {
         read();
@@ -459,7 +462,12 @@ class JPEGParser
       read(); //near
       read(); //interleave
       read(); //point transform
-
+      */
+      for ( int i = 0; i < length - 2; i++)
+      {
+        read();
+      }
+      
       setNextState();
     }
 

@@ -71,8 +71,8 @@ public class RTPPacketGenerator
     {
       markerBit = -128;
     }
-    //header_[1] = (byte)(markerBit | payload.getRTPPayloadType());
-    header_[1] = (byte)(0 | payload.getRTPPayloadType());
+    header_[1] = (byte)(markerBit | payload.getRTPPayloadType());
+    //header_[1] = (byte)(0 | payload.getRTPPayloadType());
 
     header_[2] = (byte)((sequenceNumber_ >>> 8) & 0xff);
     header_[3] = (byte)(sequenceNumber_ & 0xff);

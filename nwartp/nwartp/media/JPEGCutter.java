@@ -258,10 +258,19 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
   {
     mainJPEGHeader_.setTypeSpecific(0);//progressively scanned
     mainJPEGHeader_.setFragmentOffset(0);
-    mainJPEGHeader_.setType(0);//0 or 1:no restart markers
+
+
+    mainJPEGHeader_.setType(1);//0 or 1:no restart markers
+    //1 means:
+    //sub-sampling value of comonent 1: Ox22
+    //sub-sampling value of comonent 2: Ox11
+    //sub-sampling value of comonent 3: Ox11
+    //if component 1 has value Ox21 Type = 0 (see RFC 2435 and JPEG Documentation...)
+
+
     mainJPEGHeader_.setQ(128);//dynamic QTables
 
-    quantizationTableHeader_.setMBZ(0);//meaning of this one is not documented...
+    quantizationTableHeader_.setMBZ(0);//Must Be Zero ...
     quantizationTableHeader_.setPresition(0);//8 bit tables only
   }
 
