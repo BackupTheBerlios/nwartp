@@ -16,7 +16,7 @@ public class DummyRTPSender implements RTPSender
     }
     catch (Exception e)
     {
-      System.out.println(e);
+      
     }
     
   }
