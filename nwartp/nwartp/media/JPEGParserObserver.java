@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class JPEGParserObserver
 {
-  private Logger logger_ = new Logger("JPEGParserObserver", null);
+  private Logger logger_ = new Logger("JPEGParserObserver", null,  Logger.LEVEL_DEBUG);
 
   public void handleImageSize(int width, int heigth) {};
 

@@ -1,5 +1,7 @@
 package nwartp.media;
 
+import nwartp.util.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +13,7 @@ import java.lang.String;
 
 public class MultipleFileInputStream extends InputStream
 {
+  private Logger logger_ = new Logger("MultipleFileInputStream", null);
 
   private FileInputStream inputFile_;
   private int fileNumber_;
@@ -53,6 +56,7 @@ public class MultipleFileInputStream extends InputStream
       }
       catch (FileNotFoundException e)
       {
+        logger_.log("File not found", Logger.LEVEL_DEBUG);
         return -1;
       }      
     }

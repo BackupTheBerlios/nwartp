@@ -5,6 +5,7 @@ public class RTPPayload
   private boolean marker_;
   private byte[] payload_;
   private int timestamp_;
+  private byte rtpPayloadType_ = 123;
 
   //****************************** Public Methods ******************************
 
@@ -23,6 +24,10 @@ public class RTPPayload
     return timestamp_;
   }
 
+  public byte getRTPPayloadType()
+  {
+    return rtpPayloadType_;
+  }
   //****************************** Methods for Package Media ******************************
   //(for cutter implementations)
 
@@ -39,5 +44,10 @@ public class RTPPayload
   void setTimestamp(int t)
   {
     timestamp_ = t;
+  }
+
+  void setRTPPayloadType(byte pt)
+  {
+    rtpPayloadType_ = pt;
   }
 }

@@ -56,7 +56,6 @@ class JPEGParser
   private StreamState state_;
 
 
-  public class EndOfStreamException extends Exception{}
   public class JPEGStreamException extends Exception{}
 
   class StreamState
@@ -112,12 +111,12 @@ class JPEGParser
       int b1 = read();
       while (true)
       {
+
         if ( b1 == MARKER_SEPERATOR)
         {
           int b2 = read();
           if (b2 == MARKER_SOI)
           {
-            //FIXME handle event: new Frame found
             logger_.log("SOI found");            
             setNextState();
             return;
@@ -473,19 +472,19 @@ class JPEGParser
       int b1 = read();
       if (b1 == MARKER_SEPERATOR)
       {
-        int b2 = read();
-        switch (b2)
-        {
-        case  MARKER_SOS:
-          state_ = soi_;
-          logger_.log("second SOS => this JPEG is not supported by RTP",
-                      logger_.LEVEL_ERROR);
-          throw new JPEGStreamException();
-        }
+      int b2 = read();
+      switch (b2)
+      {
+      case  MARKER_SOS:
+      state_ = soi_;
+      logger_.log("second SOS => this JPEG is not supported by RTP",
+      logger_.LEVEL_ERROR);
+      throw new JPEGStreamException();
+      }
 
-        lookahead = new int[2];
-        lookahead[0] = b1;
-        lookahead[1] = b2;
+      lookahead = new int[2];
+      lookahead[0] = b1;
+      lookahead[1] = b2;
       }
       imageDataState_.setLookahead(lookahead);*/
       state_ = imageDataState_;
@@ -499,7 +498,7 @@ class JPEGParser
     //private int[] lookahead_ = new int[0];
 
     /*void setLookahead(int[] lookahead)
-    {
+      {
       lookahead_ = lookahead;
       }*/
 

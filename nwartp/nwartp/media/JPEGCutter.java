@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 public class JPEGCutter  extends JPEGParserObserver implements Cutter
 {
-  private Logger logger_ = new Logger("JPEGCutter", null);
+  private Logger logger_ = new Logger("JPEGCutter", null,  Logger.LEVEL_DEBUG);
 
   private InputStream inputStream_;
 
@@ -119,7 +119,7 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
     inputStream_ = null;
   }
 
-  public RTPPayload getNextPayload() throws CutterException
+  public RTPPayload getNextPayload() throws CutterException, EndOfStreamException
   {
     if (parser_ == null)
     {
@@ -134,8 +134,15 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
       {
         parser_.nextEvent();         
       }
+      catch (EndOfStreamException  e)
+      {
+        logger_.log("End of stream", Logger.LEVEL_DEBUG);
+        throw e;
+      }
+      
       catch (Exception e)
       {
+        logger_.log("JPEG stream error", Logger.LEVEL_DEBUG);
         throw new CutterException();
       }
     }
@@ -308,15 +315,17 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
   public static void main(String[] args) throws Exception
   {
     //test java byte conversion
-    int i = 254;
-    System.out.println((byte)i);
+    int test = 254;
+    System.out.println((byte)test);
 
     InputStream is = new nwartp.media.MultipleFileInputStream
-      ("/home/manni/rep/nwartp/data/00000", 3, ".jpeg", 1);
+      ("/home/manni/rep/nwartp/data/00000", 3, ".jpg", 1);
     JPEGCutter c = new JPEGCutter();
     c.attachToStream(is);
 
-    c.getNextPayload();    
-
+    for (int i = 0; i < 30; i++)
+    {
+      c.getNextPayload();    
+    }
   }
 }
