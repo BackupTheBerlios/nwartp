@@ -17,6 +17,8 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
 {
   private Logger logger_ = new Logger("JPEGCutter", null,  Logger.LEVEL_DEBUG);
 
+  private static byte PAYLOAD_TYPE_NUMBER = 26; //RFC 3551
+
   private InputStream inputStream_;
 
   private MainJPEGHeader mainJPEGHeader_ = new MainJPEGHeader();
@@ -162,8 +164,9 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
     //no splitting of a JPEG in more then one RTP Packet at the moment
     //so MarkerBit is always true and Timestamp always incremented.
     payload_.setMarkerBit(true);
-    payload_.setTimestamp(0);
-    payload_.setTime(Math.round(streamTime_));
+    payload_.setRTPPayloadType(PAYLOAD_TYPE_NUMBER);
+    payload_.setTimestamp((int)Math.round(streamTime_ * 90)); //[90000 Hz], see RTC 3551
+    payload_.setTime(Math.round(streamTime_)); //[ms]
     streamTime_ += frameDuration_;
 
     payload_.setPayload(buffer);
@@ -205,10 +208,10 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
   {
     logger_.log("handleImageData()");
     
-    //QT has to be ready here...
+    //QT has to be ready here, so write it
     writeQT();
 
-    //ugly reading bytes until end of image...
+    //ugly reading bytes until end of image, I don't know if there is a better method...
     int b1 = stream.read();
     while (true)
     {
@@ -219,6 +222,8 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
         {
         case JPEGParser.MARKER_EOI:
           ready_ = true;
+          writeByte(b1);
+          writeByte(b2);
           return;
 
         case JPEGParser.MARKER_SOS:

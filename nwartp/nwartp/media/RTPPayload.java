@@ -7,9 +7,11 @@ public class RTPPayload
 {
   private boolean marker_;
   private byte[] payload_;
-  private int timestamp_;               //RTP timestamp
-  private byte rtpPayloadType_ = 123;
-  private long time_;                   //time of packet begin in stream[ms] 
+  private int timestamp_;               //RTP timestamp, unit depends on application profile 
+                                        //(for example RFC 3551 defines some profiles)
+  private byte rtpPayloadType_;
+  private long time_;                   //time of packet (begin) in stream[ms] 
+                                        //used in nwartp server to time sending of packets
 
   //****************************** Public Methods ******************************
 
