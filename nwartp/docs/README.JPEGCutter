@@ -1,4 +1,5 @@
 Generating jpegs that work with cutter:
 
+quality and may be smooth option can be set any way you like
 
 mplayer -vo jpeg -jpeg quality=50:smooth=0:baseline:noprogressive:optimize=0 filename
