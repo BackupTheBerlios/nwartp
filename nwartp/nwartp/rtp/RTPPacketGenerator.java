@@ -14,6 +14,7 @@ public class RTPPacketGenerator
 
   private byte[] header_ = new byte[8];
   private int sequenceNumber_ = 0;
+  private RTPPacket packet_ = new RTPPacket();
 
   //cutter has to be attached to an input stream!
   public RTPPacketGenerator(Cutter cutter)
@@ -21,7 +22,7 @@ public class RTPPacketGenerator
     cutter_ = cutter;
   }
 
-  public byte[] getNextPacket() throws RTPPacketException, EndOfStreamException
+  public RTPPacket getNextPacket() throws RTPPacketException, EndOfStreamException
   {
     RTPPayload payload;
     try 
@@ -42,19 +43,24 @@ public class RTPPacketGenerator
 
     setUpHeader(payload);
 
-    for (int i = 0; i < 8; i++)
+    /*    for (int i = 0; i < 8; i++)
     {
       packet[i] = header_[i];
     }
     for (int i = 8; i < packet.length; i++)
     {
       packet[i] = payloadByteArray[i - 8];
-    }
-    
+      }*/
 
+    //generate the RTP packet byte array
+    System.arraycopy(header_, 0, packet, 0, header_.length);
+    System.arraycopy(payloadByteArray, 0, packet, header_.length, packet.length - header_.length);
     sequenceNumber_++;
 
-    return packet;
+    packet_.setTime(payload.getTime());
+    packet_.setPacket(packet);
+
+    return packet_;
   }
 
   private void setUpHeader(RTPPayload payload)
@@ -79,11 +85,11 @@ public class RTPPacketGenerator
   {
     InputStream is = new nwartp.media.MultipleFileInputStream
       ("/home/manni/rep/nwartp/data/00000", 3, ".jpg", 1);
-    Cutter c = new nwartp.media.JPEGCutter();
+    Cutter c = new nwartp.media.JPEGCutter(25);
     c.attachToStream(is);
     RTPPacketGenerator g = new RTPPacketGenerator(c);
 
-    for (int i = 0; i < 82; i++)
+    for (int i = 0; i < 10; i++)
     {
       g.getNextPacket();    
     }

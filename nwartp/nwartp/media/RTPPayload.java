@@ -1,11 +1,15 @@
 package nwartp.media;
 
+//Object not initialized in constructor to reduce
+//usage of new; so setXY() methods...
+
 public class RTPPayload
 {
   private boolean marker_;
   private byte[] payload_;
-  private int timestamp_;
+  private int timestamp_;               //RTP timestamp
   private byte rtpPayloadType_ = 123;
+  private long time_;                   //time of packet begin in stream[ms] 
 
   //****************************** Public Methods ******************************
 
@@ -28,6 +32,12 @@ public class RTPPayload
   {
     return rtpPayloadType_;
   }
+
+  public long getTime()
+  {
+    return time_;
+  }
+
   //****************************** Methods for Package Media ******************************
   //(for cutter implementations)
 
@@ -49,5 +59,10 @@ public class RTPPayload
   void setRTPPayloadType(byte pt)
   {
     rtpPayloadType_ = pt;
+  }
+
+  void setTime(long time)
+  {
+    time_ = time;
   }
 }

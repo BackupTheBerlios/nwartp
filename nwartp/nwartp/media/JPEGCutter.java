@@ -21,15 +21,15 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
 
   private MainJPEGHeader mainJPEGHeader_ = new MainJPEGHeader();
   private QuantizationTableHeader quantizationTableHeader_ = new QuantizationTableHeader();
-
   private JPEGParser parser_;
-
+  private ArrayList qTableData_ = new ArrayList();
   private ArrayList payloadBuffer_;
   private RTPPayload payload_ = new RTPPayload();
 
   private boolean ready_ = false;
 
-  private ArrayList qTableData_ = new ArrayList();
+  private double frameDuration_; //[ms]
+  private double streamTime_ = 0; //[ms]
 
   private class MainJPEGHeader
   {
@@ -158,8 +158,14 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
       buffer[i] = ((Byte)it.next()).byteValue();
       i++;
     }
+
+    //no splitting of a JPEG in more then one RTP Packet at the moment
+    //so MarkerBit is always true and Timestamp always incremented.
     payload_.setMarkerBit(true);
     payload_.setTimestamp(0);
+    payload_.setTime(Math.round(streamTime_));
+    streamTime_ += frameDuration_;
+
     payload_.setPayload(buffer);
     return payload_;
   }
@@ -236,8 +242,10 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
 
   //****************************** Methods ******************************
 
-  public JPEGCutter()
+  //no time information in JPEG stream, so has to be stored/computed outside the cutter
+  public JPEGCutter(int fps)
   {
+    frameDuration_ = 1000 / fps;
     hardcodeHeaders();
   }
 
@@ -320,7 +328,7 @@ public class JPEGCutter  extends JPEGParserObserver implements Cutter
 
     InputStream is = new nwartp.media.MultipleFileInputStream
       ("/home/manni/rep/nwartp/data/00000", 3, ".jpg", 1);
-    JPEGCutter c = new JPEGCutter();
+    JPEGCutter c = new JPEGCutter(25);
     c.attachToStream(is);
 
     for (int i = 0; i < 30; i++)

@@ -11,6 +11,32 @@ import java.io.IOException;
 import java.lang.String;
 
 
+//This class simulates/generates a continuous stream from multiple 
+//inputfiles.
+
+//File naming convention:  xyz
+//x:prefix
+//y:number with n digits
+//z:suffix
+
+//x and z are constant, y is inremented after each EOS (end of stream), but
+//has a fixed number of digits.
+
+//Example: You collect documents with the ugliest table of contents known
+//         to (at least)mankind, so you have an archive with thousands of .doc files.
+//         They are named bla000000.doc to bla934234.doc.
+//         To make them even more fearsome, this is how to create
+//         an continuous InputStream of them: 
+//         new MultipleFileInputStream("bla", 6, ".doc", 0);
+
+
+//There are 2 possible ways for triggering end of stream:
+//1. Next file with the generated/incremented name not found, so EOS
+//   reached. (Exception: if first file is not there, FileNotFoundException...)
+//2. maximal file number, representable with the number of digits is reached
+//   So, for example: if you have 1000 files and num of digits is 1, EOS
+//   after reading file 9.
+
 public class MultipleFileInputStream extends InputStream
 {
   private Logger logger_ = new Logger("MultipleFileInputStream", null);
@@ -18,6 +44,7 @@ public class MultipleFileInputStream extends InputStream
   private FileInputStream inputFile_;
   private int fileNumber_;
   private int fileNumberDigits_;
+  private int maxFileNumber_;
   private String fileName_;
   private String fileExtension_;
 
@@ -28,6 +55,14 @@ public class MultipleFileInputStream extends InputStream
     fileNumberDigits_ = digits;
     fileExtension_ = extension;
     fileNumber_ = offset;
+
+    maxFileNumber_ = 1;
+    for (int i = 0; i < digits; i++)
+    {
+      maxFileNumber_ *= 10;
+    }
+    maxFileNumber_ -= 1;
+    logger_.log("Max number of files: " + maxFileNumber_, Logger.LEVEL_DEBUG);
 
     inputFile_ = new FileInputStream(name + getFileNumberSring(offset, digits) + extension);
   }
@@ -127,11 +162,18 @@ public class MultipleFileInputStream extends InputStream
   private void nextInputFile() throws FileNotFoundException
   {
     fileNumber_++;
+    if (fileNumber_ > maxFileNumber_)
+    {
+      logger_.log("Max file number reached", Logger.LEVEL_DEBUG);
+      throw new FileNotFoundException();
+    }
+    
     inputFile_ = new FileInputStream(fileName_ + 
                                      getFileNumberSring(fileNumber_, fileNumberDigits_) +
                                      fileExtension_);
   }
 
+  //for testing only, see main
   private MultipleFileInputStream()
   {
   }
