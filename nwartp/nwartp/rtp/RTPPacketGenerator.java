@@ -12,7 +12,7 @@ public class RTPPacketGenerator
 {
   private Cutter cutter_;
 
-  private byte[] header_ = new byte[8];
+  private byte[] header_ = new byte[12];
   private int sequenceNumber_ = 0;
   private RTPPacket packet_ = new RTPPacket();
 
@@ -39,7 +39,7 @@ public class RTPPacketGenerator
     }
     
     byte[] payloadByteArray = payload.getByteArray();
-    byte[] packet = new byte[payloadByteArray.length + 8];
+    byte[] packet = new byte[payloadByteArray.length + header_.length];
 
     setUpHeader(payload);
 
@@ -71,7 +71,9 @@ public class RTPPacketGenerator
     {
       markerBit = -128;
     }
-    header_[1] = (byte)(markerBit | payload.getRTPPayloadType());
+    //header_[1] = (byte)(markerBit | payload.getRTPPayloadType());
+    header_[1] = (byte)(0 | payload.getRTPPayloadType());
+
     header_[2] = (byte)((sequenceNumber_ >>> 8) & 0xff);
     header_[3] = (byte)(sequenceNumber_ & 0xff);
 
@@ -79,6 +81,13 @@ public class RTPPacketGenerator
     header_[5] = (byte)((payload.getTimestamp() >>> 16) & 0xff);
     header_[6] = (byte)((payload.getTimestamp() >>> 8) & 0xff);
     header_[7] = (byte)(payload.getTimestamp() & 0xff);
+
+    //SSRC Identifier
+    header_[8] = 0;
+    header_[9] = 0;
+    header_[10] = 0;
+    header_[11] = 42;
+
   }
 
   public static void main(String[] args) throws Exception

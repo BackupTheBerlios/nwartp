@@ -64,14 +64,14 @@ public class RTPController implements Runnable
   public static void main(String[] args) throws Exception
   {
     java.io.InputStream is = new nwartp.media.MultipleFileInputStream
-      ("/home/manni/rep/nwartp/data/0000000", 1, ".jpg", 1);
+      ("/home/manni/rep/nwartp/data/00000", 3, ".jpg", 1);
     nwartp.media.Cutter c = new nwartp.media.JPEGCutter(25);
     c.attachToStream(is);
     RTPPacketGenerator g = new RTPPacketGenerator(c);
     RTPController controller = new RTPController(g, new DummyRTPSender());
 
     controller.start();
-    Thread.currentThread().sleep(1000);
-    controller.stop();
+    //Thread.currentThread().sleep(1000);
+    //controller.stop();
   }
 }

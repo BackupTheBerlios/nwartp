@@ -16,7 +16,7 @@ public class DummyRTPSender implements RTPSender
     }
     catch (Exception e)
     {
-      
+      System.out.println(e);
     }
     
   }
@@ -26,7 +26,7 @@ public class DummyRTPSender implements RTPSender
     try 
     {
       DatagramPacket datagram = new DatagramPacket(packet, packet.length, 
-                                                   InetAddress.getByName("localhost"), 6666);
+                                                   InetAddress.getByName("localhost"), 1234);
       dSock_.send(datagram); 
     }
     catch (Exception e)
