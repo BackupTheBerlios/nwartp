@@ -1,0 +1,48 @@
+Projektplan
+
+
+Was:       Einlesen in Literatur, Evaluierung von Frameworks (OpenMash, JMF, OpenML)
+Wann:      Okt, Nov
+Zeit:      5 h
+Wer:       MK, WS
+Kommentar: Ziemlich umfangreiche Thematik. Genauere Beschäftigung zwecks Zeit
+nicht möglich. JMF erscheint uns am geeignesten.
+
+Was:       Installation und Einlesen in JFM  
+Wann:      Nov
+Zeit:      3 h
+Wer:       MK, WS
+Kommentar: JMF ist ganz gut für unsere Zwecke geeignet. Einziges Problem ist,
+dass bereits ein fertiger RTP-Server vorliegt der unsere Zwecke erfüllt. Diesen
+Nachzuprogrammieren erschien uns nicht sinnvoll => Verzicht auf das Framework und
+Ausarbeitung eines RTP-Payload-Types.
+
+Was:       RTP/RTCP-RFC durchackern
+Wann:      Nov
+Zeit:      5 h
+Wer:       MK, WS
+Kommentar: Das RFC zu RTP/RTCP ist sehr komplex. Eine genaue Durcharbeitung
+in unseren Zeitschranken nicht möglich. Daher Reduzierung des Servers auf reines
+Streaming.
+
+Was:       Ausarbeitung eines geeigneten RTP-Payloads, Implementation desselben
+Wann:      Dez, Jan
+Zeit:      15 h
+Wer:       MK
+Kommentar: Da der Schwerpunkt des Projekts am Server liegen soll erschien es uns
+am einfachsten, den Payload-Typ Motion-JPEG zu implementieren.
+
+Was:       Server-Umgebung
+Wann:      Dez, Jan
+Zeit:      10 h
+Wer:       WS
+Kommentar: Schaffen einer geeigneten Umgebung zu
+
+Noch zu machen:
+
+* Implementierung RTP/RTCP                30 h
+* Einbindung der Media-Teile              25 h
+* Tests                                   20 h
+* Ausarbeiten der Präsentationsthemen     20 h
+* Erstellen der Präsentation               5 h
+

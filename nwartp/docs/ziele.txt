@@ -1,0 +1,78 @@
+Netzwerkaspekte VU 2003/04
+
+Streaming Protokolle - Zieldefiniton
+
+Projekt "Streamy RTP"
+
+1) Gruppenmitglieder
+Manfred Klopschitz, 9930640, manni@sbox.tugraz.at
+Wolfgang Schriebl, 9930373, swulf@sbox.tugraz.at
+
+2) Implementation
+
+a) Projektgebiet
+Unter dem Stichwort "Streaming Protokolle" haben wir die Aufgabe, einen Streaming-Server
+zu implementieren, welcher das Real-Time Streaming Protokoll (RTP) implementiert. Dieses
+Protokoll gliedert sich in zwei Teile; in das Trasportprotokoll RTP und das Steuerprotokoll
+RTCP.
+
+b) RTP
+Die Implementierung erfolgt streng nach RFC 3550.
+RTP ist ein reines Transportprotokoll welches aber nicht im Transport-Layer angesiedelt
+ist sondern in der Anwendungsschicht läuft. Als Transportprotokoll für RTP verwenden wir
+UDP. Dieses hat den Vorteil auch Multicasting-Packete zu unterstützen.
+Die Funktionalität wird soweit umgesetzt, wie dies für den Ablauf einer Session,
+d.h. mit lediglich einem Datenkanal, notwendig ist. Auf externe Funktionen (JMF) für RTP wird
+nicht zurückgegriffen :-)
+
+Die wichtigsten Funktionen sind:
+* Aufsetzten auf das Transportprotokoll UDP
+* multicasting
+* timestamp
+* sequence number
+
+c) RTCP
+Die Implementierung des Steuerprotokolls RTCP erfolgt ebenso nach RFC 3550. Hierbei werden wir uns
+jedoch auf die für die richtige Funktion nötigen Teile/Aufgaben beschränken. Diese umfassen:
+* Aufsetzten auf das Transportprotokoll TCP (Port RTP+1)
+* Sender Report (SR) und Receiver Report(RR)
+* Source description items (SDES)
+* Verbindungsende (BYE)
+* Anwendungsspezifische Packete (APP) werden nicht implemenetiert
+
+d) Multimediale Teile
+Die multimedialen Teile der Serveranwendung sollen, soweit möglich, durch bereits vorhandene
+Implementationen von Video/Audio-Codecs basieren.
+Ziel ist einen vollständig Server zu implementieren, welcher eine Spur (Audio oder Video) übertragen
+kann.
+Optional werden wir die DeMultiplexing-Funktionen von JMF für die Übermittlung mehrerer Sessions
+(z.B.:Video mit Audiokanal, beide Kanäle werden als eigene Session angeboten.) verwenden.
+
+e) Client für die Tests
+Um den Server zu testen, verwenden wir einen verfügbaren RTP-Client z.B.: JMF-Beispielclient.
+
+Anhang A.) Verwendete Plattform/Programmiersprache
+Plattformunabhängig (Tests unter Linux) 
+Java 1.4 (Blackdown-jdk 1.4.1)
+Java Media Framework (Sun JMF 2.1.1)
+
+Anhang B.) Zeit-/Projektplan
+
+Bereits erfolgt:
+
+* Einlesen in Literatur, Evaluierung von 
+  Frameworks (OpenMash, JMF, OpenML)       5 h
+* Installation und Einlesen in JFM         3 h
+* RTP/RTCP-RFC durchackern                 4 h
+
+Noch zu machen:
+
+* Implementierung RTP/RTCP                30 h
+* Einbindung der Media-Teile              25 h
+* Tests                                   20 h
+* Ausarbeiten der Präsentationsthemen     20 h
+* Erstellen der Präsentation               5 h
+
+Anmerkung: Zeitangabe pro Kopf.
+
+Zeitplan: am besten bis zum 18.11.2003 :-)
